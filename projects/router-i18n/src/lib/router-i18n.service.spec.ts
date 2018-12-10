@@ -47,6 +47,7 @@ describe('RouterI18nService', () => {
     store = TestBed.get(RouterI18nStore);
     router = TestBed.get(Router);
     location = TestBed.get(Location);
+    console.log('beforeeach');
   });
 
   afterEach(() => {
@@ -110,6 +111,9 @@ describe('RouterI18nService', () => {
     expect(location.path()).toBe('');
     service.changeLanguage('ru');
     expect(location.path()).toBe('/ru');
+    service.setConfig({hideDefaultLang: false});
+    service.changeLanguage('en');
+    expect(location.path()).toBe('/en');
   });
 
   it('should get lang from url', () => {
@@ -129,6 +133,10 @@ describe('RouterI18nService', () => {
     service.changeLanguage('en');
     expect(service.translateUrl('/test')).toBe('/test');
     expect(service.translateUrl('/test#fragment')).toBe('/test#fragment');
+    service.setConfig({hideDefaultLang: false});
+    expect(service.translateUrl('/test')).toBe('/en/test');
+    expect(service.translateUrl('/test#fragment')).toBe('/test#fragment');
+    
   });
 
   it('should return current lang', () => {
