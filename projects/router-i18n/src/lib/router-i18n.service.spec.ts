@@ -127,16 +127,21 @@ describe('RouterI18nService', () => {
     service.init(['en', 'ru']);
     expect(service.translateUrl('/test')).toBe('/test');
     expect(service.translateUrl('/test#fragment')).toBe('/test#fragment');
+    expect(service.translateUrl('/test/subtest/test')).toBe('/test/subtest/test');
     service.changeLanguage('ru');
     expect(service.translateUrl('/test')).toBe('/ru/test');
+    expect(service.translateUrl('/test/subtest/test')).toBe('/ru/test/subtest/test');
     expect(service.translateUrl('/test#fragment')).toBe('/ru/test#fragment');
     service.changeLanguage('en');
     expect(service.translateUrl('/test')).toBe('/test');
+    expect(service.translateUrl('/test/subtest/test')).toBe('/test/subtest/test');
     expect(service.translateUrl('/test#fragment')).toBe('/test#fragment');
     service.setConfig({hideDefaultLang: false});
+    service.changeLanguage('ru');
+    service.changeLanguage('en');
     expect(service.translateUrl('/test')).toBe('/en/test');
-    expect(service.translateUrl('/test#fragment')).toBe('/test#fragment');
-    
+    expect(service.translateUrl('/test#fragment')).toBe('/en/test#fragment');
+    expect(service.translateUrl('/test/subtest/test')).toBe('/en/test/subtest/test');
   });
 
   it('should return current lang', () => {

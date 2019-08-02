@@ -140,7 +140,7 @@ export class RouterI18nService {
     url = url.replace(/[\/#\?]/g, '^$&');
 
     const urlSegments = url.split('^');
-    console.log(this.config);
+
     if (lang !== this.routerI18nStore.defaultLang || (lang === this.routerI18nStore.defaultLang && !this.config.hideDefaultLang))
       urlSegments.unshift('/' + lang);
 
@@ -161,6 +161,5 @@ export class RouterI18nService {
 
   public setConfig(_config: RouterI18nConfig): void {
     this.config = {...this.config, ..._config};
-    console.log(this.config);
   }
 }
