@@ -137,7 +137,7 @@ export class RouterI18nService {
 
     const lang = this.routerI18nStore.currentLang;
 
-    url = url.replace(/[\/#\?]/g, '^$&');
+    url = url.replace(/[\/#\?]/g, '^$&'); //$& inserts the matched substring e.g. /test#fragment => ^/test^#fragment
 
     const urlSegments = url.split('^');
 

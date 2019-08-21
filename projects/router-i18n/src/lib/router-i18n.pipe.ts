@@ -15,6 +15,8 @@ export class RouterI18nPipe implements PipeTransform {
   }
 
   transform(_value: any): any {
+    if (_value.indexOf('../') === 0 || _value.indexOf('./') === 0) return _value;
+    
     this.value = this.routerI18nService.translateUrl(_value);
 
     return this.value;
