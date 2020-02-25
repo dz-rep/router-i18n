@@ -22,8 +22,6 @@
     "strictMetadataEmit": true,
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
-    "flatModuleId": "router-i18n",
-    "flatModuleOutFile": "public_api.ts"
   },
   "exclude": [
     "src/test.ts",
