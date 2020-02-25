@@ -12,7 +12,7 @@ import { RouterI18nPipe } from './router-i18n.pipe';
   exports: [RouterI18nPipe]
 })
 export class RouterI18nModule {
-  static forRoot(routes: Routes, config: RouterI18nConfig = {hideDefaultLang: true}): ModuleWithProviders {
+  static forRoot(routes: Routes, config: RouterI18nConfig = {hideDefaultLang: true}): ModuleWithProviders<RouterI18nModule> {
     return {
       ngModule: RouterI18nModule,
       providers: [
