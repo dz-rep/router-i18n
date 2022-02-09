@@ -46,11 +46,11 @@ describe('RouterI18nService', () => {
         RouterI18nPipe
       ]
     });
-    service = TestBed.get(RouterI18nService);
-    store = TestBed.get(RouterI18nStore);
-    router = TestBed.get(Router);
-    location = TestBed.get(Location);
-    pipe = TestBed.get(RouterI18nPipe);
+    service = TestBed.inject(RouterI18nService);
+    store = TestBed.inject(RouterI18nStore);
+    router = TestBed.inject(Router);
+    location = TestBed.inject(Location);
+    pipe = TestBed.inject(RouterI18nPipe);
     console.log('beforeeach');
   });
 
