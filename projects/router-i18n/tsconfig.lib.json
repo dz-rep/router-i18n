@@ -22,6 +22,7 @@
     "strictMetadataEmit": true,
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
+    "compilationMode": "partial"
   },
   "exclude": [
     "src/test.ts",
