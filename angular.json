@@ -147,8 +147,8 @@
           },
           "configurations": {
             "production": {
-              "project": "projects/router-i18n/ng-package.prod.json"
-            ,              "tsConfig": "projects/router-i18n/tsconfig.lib.prod.json"
+              "project": "projects/router-i18n/ng-package.prod.json",
+              "tsConfig": "projects/router-i18n/tsconfig.lib.prod.json"
 }
           }
         },
