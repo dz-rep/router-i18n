@@ -13,8 +13,8 @@ import { Page1Component } from './page1/page1.component';
 import { Page2Component } from './page2/page2.component';
 
 const appRoutes: Routes = [
-  {path: '', loadChildren: './first/first.module#FirstModule'},
-  {path: 'p2', loadChildren: './second/second.module#SecondModule'},
+  {path: '', loadChildren: () => import('./first/first.module').then(m => m.FirstModule)},
+  {path: 'p2', loadChildren: () => import('./second/second.module').then(m => m.SecondModule)},
   {path: '**', redirectTo: '/p2'}
 ]
 
