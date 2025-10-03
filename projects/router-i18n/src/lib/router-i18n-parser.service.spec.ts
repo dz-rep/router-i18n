@@ -53,11 +53,11 @@ describe('RouterI18nParserService', () => {
       ]
     });
 
-    parser = TestBed.get(RouterI18nParser);
-    service = TestBed.get(RouterI18nService);
-    store = TestBed.get(RouterI18nStore);
+    parser = TestBed.inject(RouterI18nParser);
+    service = TestBed.inject(RouterI18nService);
+    store = TestBed.inject(RouterI18nStore);
     store.langs = ['en', 'ru'];
-    router = TestBed.get(Router);
+    router = TestBed.inject(Router);
   });
 
   afterEach(() => {
