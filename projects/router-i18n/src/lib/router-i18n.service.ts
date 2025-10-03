@@ -1,10 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, InjectionToken, Inject } from '@angular/core';
 import { RouterI18nParser } from './router-i18n-parser.service';
 import { RouterI18nStore } from './router-i18n-store.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Location } from '@angular/common';
 import { Subject, Observable } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+
+export interface RouterI18nConfig {
+  hideDefaultLang?: boolean
+}
+
+export const ROUTER_I18N_CONFIG = new InjectionToken<RouterI18nConfig>('ROUTER_I18N_CONFIG');
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class RouterI18nService {
 
   private langChangingSubject: Subject<string> = new Subject();
+  private config: RouterI18nConfig = undefined;
 
   constructor(
     private routerI18nParser: RouterI18nParser,
@@ -19,9 +26,9 @@ export class RouterI18nService {
     private translateService: TranslateService,
     private location: Location,
     private route: ActivatedRoute,
-    private router: Router
+    @Inject(ROUTER_I18N_CONFIG) private _config: RouterI18nConfig
   ) {
-
+    this.config = {..._config};
   }
 
   public init(_languages: string[], _defaultLang?: string): void {
@@ -106,7 +113,7 @@ export class RouterI18nService {
       urlSegments.shift();
     }
 
-    if (lang !== this.routerI18nStore.defaultLang)
+    if (lang !== this.routerI18nStore.defaultLang || (lang === this.routerI18nStore.defaultLang && !this.config.hideDefaultLang))
       urlSegments.unshift('/' + lang);
 
     let newUrl = urlSegments.join('');
@@ -130,15 +137,14 @@ export class RouterI18nService {
 
     const lang = this.routerI18nStore.currentLang;
 
-    const urlSegments = url.split('/');
+    url = url.replace(/[\/#\?]/g, '^$&'); //$& inserts the matched substring e.g. /test#fragment => ^/test^#fragment
 
-    if (urlSegments[0] === '') {
-      urlSegments.shift();
-    }
-    urlSegments.unshift(lang);
-    urlSegments.unshift('');
+    const urlSegments = url.split('^');
 
-    return urlSegments.join('/');
+    if (lang !== this.routerI18nStore.defaultLang || (lang === this.routerI18nStore.defaultLang && !this.config.hideDefaultLang))
+      urlSegments.unshift('/' + lang);
+
+    return urlSegments.join('');
   }
 
   public getCurrentLang(): string {
@@ -151,5 +157,9 @@ export class RouterI18nService {
 
   public onLangChanged(): Observable<string> {
     return this.langChangingSubject.asObservable();
+  }
+
+  public setConfig(_config: RouterI18nConfig): void {
+    this.config = {...this.config, ..._config};
   }
 }
