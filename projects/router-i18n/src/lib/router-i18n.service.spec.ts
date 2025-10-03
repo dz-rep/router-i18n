@@ -4,6 +4,7 @@ import { Router, Routes, RouterModule } from '@angular/router';
 import { RouterI18nStore } from './router-i18n-store.service';
 import { APP_BASE_HREF, Location } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { RouterI18nPipe } from './router-i18n.pipe';
 
 class FakeTranslateService {
   defLang: string;
@@ -23,6 +24,7 @@ describe('RouterI18nService', () => {
   let service: RouterI18nService;
   let store: RouterI18nStore;
   let router: Router;
+  let pipe: RouterI18nPipe
   const routes: Routes = [
     { path: 'p1', redirectTo: '/p2' },
     { path: '**', redirectTo: '/' }
@@ -40,13 +42,16 @@ describe('RouterI18nService', () => {
         RouterI18nParser,
         { provide: APP_BASE_HREF, useValue: '/' },
         { provide: TranslateService, useClass: FakeTranslateService },
-        Location
+        Location,
+        RouterI18nPipe
       ]
     });
-    service = TestBed.get(RouterI18nService);
-    store = TestBed.get(RouterI18nStore);
-    router = TestBed.get(Router);
-    location = TestBed.get(Location);
+    service = TestBed.inject(RouterI18nService);
+    store = TestBed.inject(RouterI18nStore);
+    router = TestBed.inject(Router);
+    location = TestBed.inject(Location);
+    pipe = TestBed.inject(RouterI18nPipe);
+    console.log('beforeeach');
   });
 
   afterEach(() => {
@@ -54,6 +59,7 @@ describe('RouterI18nService', () => {
     service = undefined;
     store = undefined;
     router = undefined;
+    pipe = undefined;
     location.go('/');
   });
 
@@ -110,6 +116,9 @@ describe('RouterI18nService', () => {
     expect(location.path()).toBe('');
     service.changeLanguage('ru');
     expect(location.path()).toBe('/ru');
+    service.setConfig({hideDefaultLang: false});
+    service.changeLanguage('en');
+    expect(location.path()).toBe('/en');
   });
 
   it('should get lang from url', () => {
@@ -123,12 +132,41 @@ describe('RouterI18nService', () => {
     service.init(['en', 'ru']);
     expect(service.translateUrl('/test')).toBe('/test');
     expect(service.translateUrl('/test#fragment')).toBe('/test#fragment');
+    expect(service.translateUrl('/test/subtest/test')).toBe('/test/subtest/test');
     service.changeLanguage('ru');
     expect(service.translateUrl('/test')).toBe('/ru/test');
+    expect(service.translateUrl('/test/subtest/test')).toBe('/ru/test/subtest/test');
     expect(service.translateUrl('/test#fragment')).toBe('/ru/test#fragment');
     service.changeLanguage('en');
     expect(service.translateUrl('/test')).toBe('/test');
+    expect(service.translateUrl('/test/subtest/test')).toBe('/test/subtest/test');
     expect(service.translateUrl('/test#fragment')).toBe('/test#fragment');
+    service.setConfig({hideDefaultLang: false});
+    service.changeLanguage('ru');
+    service.changeLanguage('en');
+    expect(service.translateUrl('/test')).toBe('/en/test');
+    expect(service.translateUrl('/test#fragment')).toBe('/en/test#fragment');
+    expect(service.translateUrl('/test/subtest/test')).toBe('/en/test/subtest/test');
+  });
+
+  it('pipe should translate urls', () => {
+    service.init(['en', 'ru']);
+    expect(pipe.transform('/test')).toBe('/test');
+    expect(pipe.transform('../')).toBe('../');
+    expect(pipe.transform('../test')).toBe('../test');
+    expect(pipe.transform('./')).toBe('./');
+    service.changeLanguage('ru');
+    expect(pipe.transform('/test')).toBe('/ru/test');
+    expect(pipe.transform('../')).toBe('../');
+    expect(pipe.transform('../test')).toBe('../test');
+    expect(pipe.transform('./')).toBe('./');
+    expect(pipe.transform('./test')).toBe('./test');
+    service.setConfig({hideDefaultLang: false});
+    service.changeLanguage('en');
+    expect(pipe.transform('/test')).toBe('/en/test');
+    expect(pipe.transform('../')).toBe('../');
+    expect(pipe.transform('../test')).toBe('../test');
+    expect(pipe.transform('./')).toBe('./');
   });
 
   it('should return current lang', () => {
